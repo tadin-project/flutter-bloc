@@ -1,0 +1,38 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id         Int       @id @default(autoincrement()) @map("user_id")
+  name       String?   @map("user_name") @db.VarChar(255)
+  email      String    @unique @map("user_email") @db.VarChar(255)
+  password   String    @map("user_password") @db.Text
+  role       Role      @relation(fields: [roleId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  roleId     Int       @default(3) @map("role_id") @db.UnsignedSmallInt
+  isVerified Boolean   @default(false) @map("verified_status")
+  verifiedAt DateTime? @map("verified_at")
+  uuid       String    @db.VarChar(255)
+
+  @@map("ms_users")
+}
+
+model Role {
+  id     Int      @id @default(autoincrement()) @map("role_id") @db.UnsignedSmallInt
+  kode   String   @unique @map("role_kode") @db.VarChar(10)
+  name   String?  @map("role_name") @db.VarChar(255)
+  status Boolean? @default(true) @map("role_status")
+  User   User[]
+
+  @@map("ms_roles")
+}
