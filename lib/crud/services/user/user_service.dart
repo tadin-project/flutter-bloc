@@ -1,10 +1,10 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 
-import '../result.dart';
 import '../../config/dio_client.dart';
 import '../../models/api_response.dart';
 import '../../models/user.dart';
+import '../result.dart';
 
 class UserService {
   final DioClient _dio = DioClient();

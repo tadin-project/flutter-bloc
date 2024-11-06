@@ -196,16 +196,13 @@ class ErrorInterceptor extends Interceptor {
         }
         break;
       case DioExceptionType.cancel:
-        // TODO: Handle this case.
         break;
       case DioExceptionType.unknown:
         debugPrint(err.message);
         throw NoInternetConnectionException(err.requestOptions);
       case DioExceptionType.badCertificate:
-        // TODO: Handle this case.
         break;
       case DioExceptionType.connectionError:
-        // TODO: Handle this case.
         break;
     }
     return handler.next(err);

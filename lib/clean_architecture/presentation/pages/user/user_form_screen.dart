@@ -1,10 +1,10 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-
+import '../../../data/models/user/user_model.dart';
+import '../../../domain/entities/user.dart';
 import '../../bloc/user/form/role_bloc.dart';
 import '../../bloc/user/form/user_form_bloc.dart';
-import '../../models/user.dart';
-import 'widgets/app_input.dart';
+import '../../widgets/user/app_input.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class UserFormScreen extends StatefulWidget {
   final User? user;
@@ -25,7 +25,7 @@ class _UserFormScreenState extends State<UserFormScreen> {
     super.initState();
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      context.read<RoleBloc>().add(GetRole());
+      context.read<RoleBloc>().add(GetRoles());
     });
     if (widget.user != null) {
       User currUser = widget.user!;
@@ -113,19 +113,19 @@ class _UserFormScreenState extends State<UserFormScreen> {
                                 if (widget.user != null) {
                                   context.read<UserFormBloc>().add(
                                         UpdateUser(
-                                          widget.user!.id!,
-                                          User(
+                                          UserModel(
                                             email: emailC.text,
                                             name: nameC.text,
                                             password: passwordC.text,
                                             roleId: int.parse(roleC.text),
+                                            id: widget.user!.id!,
                                           ),
                                         ),
                                       );
                                 } else {
                                   context.read<UserFormBloc>().add(
                                         AddUser(
-                                          User(
+                                          UserModel(
                                             email: emailC.text,
                                             name: nameC.text,
                                             password: passwordC.text,

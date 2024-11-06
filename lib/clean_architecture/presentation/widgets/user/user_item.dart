@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../../../bloc/user/main/user_bloc.dart';
-import '../../../models/user.dart';
+import '../../../domain/entities/user.dart';
+import '../../bloc/user/main/user_bloc.dart';
 import 'confirm.dart';
 import 'go_form_screen.dart';
 
@@ -63,7 +63,7 @@ class UserItem extends StatelessWidget {
                     showAlertDialog(
                       context,
                       onConfirm: () {
-                        context.read<UserBloc>().add(DeleteUser(user.id!));
+                        context.read<UserBloc>().add(Remove(user.id!));
                         Navigator.of(context).pop();
                       },
                       onCancel: () {
