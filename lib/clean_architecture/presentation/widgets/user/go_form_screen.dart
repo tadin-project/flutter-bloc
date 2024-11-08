@@ -15,7 +15,7 @@ void goFormScreen(BuildContext context, {User? user}) {
       builder: (context) => MultiBlocProvider(
         providers: [
           BlocProvider<RoleBloc>(
-            create: (context) => sl<RoleBloc>(),
+            create: (context) => sl<RoleBloc>()..add(GetRoles()),
           ),
           BlocProvider<UserFormBloc>(
             create: (context) => sl<UserFormBloc>(),

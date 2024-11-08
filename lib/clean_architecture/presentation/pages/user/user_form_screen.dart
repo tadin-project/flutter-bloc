@@ -1,4 +1,5 @@
-import '../../../data/models/user/user_model.dart';
+import 'package:crud_bloc/clean_architecture/presentation/widgets/user/app_select.dart';
+
 import '../../../domain/entities/user.dart';
 import '../../bloc/user/form/role_bloc.dart';
 import '../../bloc/user/form/user_form_bloc.dart';
@@ -18,7 +19,7 @@ class _UserFormScreenState extends State<UserFormScreen> {
   final TextEditingController nameC = TextEditingController();
   final TextEditingController emailC = TextEditingController();
   final TextEditingController passwordC = TextEditingController();
-  final TextEditingController roleC = TextEditingController();
+  int roleId = 1;
 
   @override
   void initState() {
@@ -31,7 +32,7 @@ class _UserFormScreenState extends State<UserFormScreen> {
       User currUser = widget.user!;
       nameC.text = currUser.name;
       emailC.text = currUser.email;
-      roleC.text = currUser.roleId.toString();
+      roleId = currUser.roleId;
     }
   }
 
@@ -40,7 +41,6 @@ class _UserFormScreenState extends State<UserFormScreen> {
     nameC.dispose();
     emailC.dispose();
     passwordC.dispose();
-    roleC.dispose();
     super.dispose();
   }
 
@@ -55,7 +55,7 @@ class _UserFormScreenState extends State<UserFormScreen> {
       child: BlocBuilder<UserFormBloc, UserFormState>(
         builder: (context, state) {
           return BlocBuilder<RoleBloc, RoleState>(
-            builder: (BuildContext context2, state2) {
+            builder: (BuildContext roleContext, roleState) {
               return Scaffold(
                 appBar: AppBar(
                   title:
@@ -102,36 +102,47 @@ class _UserFormScreenState extends State<UserFormScreen> {
                           label: "Password",
                           controller: passwordC,
                         ),
-                        AppInput(
+                        AppSelect<int>(
                           label: "Role",
-                          controller: roleC,
+                          items: roleState is RoleLoaded
+                              ? roleState.roles
+                                  .map(
+                                    (role) => DropdownMenuItem(
+                                      value: role.id!,
+                                      child: Text(
+                                        role.name,
+                                      ),
+                                    ),
+                                  )
+                                  .toList()
+                              : [],
+                          value: roleId,
+                          onChanged: (int? id) {
+                            if (id != null) {
+                              setState(() {
+                                roleId = id;
+                              });
+                            }
+                          },
                         ),
                         const SizedBox(height: 20),
                         ElevatedButton(
                             onPressed: () {
                               if (state is! UserFormLoading) {
+                                User userData = User(
+                                    name: nameC.text,
+                                    email: emailC.text,
+                                    password: passwordC.text,
+                                    roleId: roleId);
                                 if (widget.user != null) {
+                                  userData =
+                                      userData.copyWith(id: widget.user!.id);
                                   context.read<UserFormBloc>().add(
-                                        UpdateUser(
-                                          UserModel(
-                                            email: emailC.text,
-                                            name: nameC.text,
-                                            password: passwordC.text,
-                                            roleId: int.parse(roleC.text),
-                                            id: widget.user!.id!,
-                                          ),
-                                        ),
+                                        UpdateUser(userData),
                                       );
                                 } else {
                                   context.read<UserFormBloc>().add(
-                                        AddUser(
-                                          UserModel(
-                                            email: emailC.text,
-                                            name: nameC.text,
-                                            password: passwordC.text,
-                                            roleId: int.parse(roleC.text),
-                                          ),
-                                        ),
+                                        AddUser(userData),
                                       );
                                 }
                               }
